@@ -11,7 +11,8 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.align = 'center')
 
-setwd("C:/Users/nanna/OneDrive - Aarhus universitet/4. Semester/Social And Cultural/Day 5")
+setwd("C:/Users/nanna/OneDrive - Aarhus universitet/4. Semester/Experimental Methods 4/EyeTracking/EyeTrackingCourse")
+getwd()
 
 ```
 
@@ -344,16 +345,16 @@ ggplot(FixationsVS, aes(x=Task, y=Duration, color=Task)) +
   labs(title ='Distribution of Duration of Fixations Acording to Task')
 
 
-ggplot(Fixations2018, aes(x=StartTimeS, y=PupilSize, color=ParticipantGender)) + 
-  geom_smooth(method = "auto", se = F) + facet_grid(Position~Gender) +
+ggplot(FixationsVS, aes(x=StartTimeS, y=PupilSize, color=ParticipantGender)) + 
+  geom_smooth(method = "auto", se = F) + facet_grid(PositionX~ParticipantGender) +
   labs(title ='Distribution of Duration of Fixations Acording to Task')
 
-ggplot(Fixations2018, aes(x=Fixation, y=PupilSize, color=ParticipantGender)) + 
-  geom_smooth(method = "auto", se = F) + facet_grid(Position~Gender) +
+ggplot(FixationsVS, aes(x=Fixation, y=PupilSize, color=ParticipantGender)) + 
+  geom_smooth(method = "auto", se = F) + facet_grid(PositionX~ParticipantGender) +
   labs(title ='Distribution of Duration of Fixations Acording to Task')
 
-ggplot(Fixations2018, aes(x=Fixation, y=PupilSize, color=ParticipantGender)) + 
-  geom_smooth(method = "lm", se = F) + facet_grid(Position~Gender) +
+ggplot(FixationsVS, aes(x=Fixation, y=PupilSize, color=ParticipantGender)) + 
+  geom_smooth(method = "lm", se = F) + facet_grid(PositionX~ParticipantGender) +
   labs(title ='Distribution of Duration of Fixations Acording to Task')
 
 
@@ -410,7 +411,7 @@ ggplot(x, aes(x = PositionX, y = 1081-PositionY)) +
 jet.colors <- colorRampPalette(c("#00007F", "blue", "#007FFF",
                                  "cyan", "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
 
-z = subset(VS_Fixations, ParticipantID ==	'2019-2_2_f22' & Item == 'fjord.jpg')
+z = subset(FixationsVS, ParticipantID ==	'2019-2_2_f22' & Item == 'fjord.jpg')
 
 #Just heatmap
 ggplot(z, aes(x = PositionX, y = 1081-PositionY)) +
@@ -467,6 +468,9 @@ ggplot(x, aes(x = PositionX, y = 1081-PositionY)) +
 ```
 
 
+
+
+
 ```{r + dump}
 gurl <- filter(FixationsVS, ParticipantID == '2019-6_3_f22' & Trial == "8")
 ```
@@ -505,19 +509,19 @@ Saccades2018$StartTimeS = scale(Saccades2018$StartTime)
 
 ```{r + Models}
 
-pup_1 <- glmer(PupilSize ~ Ostension * Position + (1 | ParticipantID), family = gaussian(link = log), FixationsSE, REML = F)
+pup_1 <- glmer(PupilSize ~ Ostension * Position + (1 | ParticipantID), family = gaussian(link = log), Fixations2018, REML = F)
 
-pup_2 <- glmer(PupilSize ~ Ostension * Position + StartTimeS + (1 | ParticipantID), family = gaussian(link = log), FixationsSE, REML = F)
+pup_2 <- glmer(PupilSize ~ Ostension * Position + StartTimeS + (1 | ParticipantID), family = gaussian(link = log), Fixations2018, REML = F)
 
 pup_3 <- glmer(PupilSize ~ Ostension * Position + ParticipantGender * Gender + (1 | ParticipantID), family = gaussian(link = log), Fixations2018, REML = F)
 
 pup_4 <- glmer(PupilSize ~ Ostension + Position + ParticipantGender * Gender + (1 | ParticipantID), family = gaussian(link = log), Fixations2018, REML = F)
 
-pup_5 <- glmer(PupilSize ~ ParticipantGender * Gender + (1 | ParticipantID), family = gaussian(link = log), FixationsSE, REML = F)
+pup_5 <- glmer(PupilSize ~ ParticipantGender * Gender + (1 | ParticipantID), family = gaussian(link = log), Fixations2018, REML = F)
 
-pup_6 <- glmer(PupilSize ~ Position + ParticipantGender * Gender + (1 | ParticipantID), family = gaussian(link = log), FixationsSE, REML = F)
+pup_6 <- glmer(PupilSize ~ Position + ParticipantGender * Gender + (1 | ParticipantID), family = gaussian(link = log), Fixations2018, REML = F)
 
-pup_7 <- glmer(PupilSize ~ Ostension + Position + (1 | ParticipantID), family = gaussian(link = log), FixationsSE, REML = F)
+pup_7 <- glmer(PupilSize ~ Ostension + Position + (1 | ParticipantID), family = gaussian(link = log), Fixations2018, REML = F)
 
 pup_8 <- glmer(PupilSize ~ ParticipantGender * Gender + Position + StartTimeS + (1 | ParticipantID), family = gaussian(link = log), Fixations2018, REML = F)
 
@@ -600,10 +604,10 @@ pup %>%
   geom_point() + facet_wrap( ~ Ostension)
 
 
+
 Fixations2018 %>% 
   group_by(ParticipantGender, Gender, Position, Ostension) %>% 
   summarise(PupilMean = mean(PupilSize)) -> puppy
-
 
 puppy %>% 
   ggplot() +
